@@ -102,6 +102,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,8 +128,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="volcano.cpp" />
     <ClCompile Include="textures.cpp" />
+    <ClCompile Include="init\init.cpp" />
+    <ClCompile Include="init\timer.cpp" />
+    <ClCompile Include="models\volcano.cpp" />
+    <ClCompile Include="models\lake.cpp" />
+    <ClCompile Include="models\terrain.cpp" />
+    <ClCompile Include="models\smoke.cpp" />
+    <ClCompile Include="particles\particles.cpp" />
+    <ClCompile Include="display\display.cpp" />
+    <ClCompile Include="display\menu.cpp" />
+    <ClCompile Include="controls\keyboard.cpp" />
+    <ClCompile Include="controls\mouse.cpp" />
+    <ClCompile Include="skybox\skybox.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="volcano.h" />
