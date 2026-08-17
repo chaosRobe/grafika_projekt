@@ -1,4 +1,5 @@
 #include "volcano.h"
+#include "textures.h"
 
 extern AppState g_app;
 
@@ -10,6 +11,7 @@ int main(int argc, char** argv) {
     glutCreateWindow("Wulkan - OpenGL");
 
     initAppState(g_app);
+    initTextures(g_app);
     initOpenGL(g_app);
 
     glutDisplayFunc([]() { displayScene(g_app); });

@@ -1,4 +1,5 @@
 #include "volcano.h"
+#include "textures.h"
 #include <cmath>
 #include <cstring>
 
@@ -107,6 +108,9 @@ void updateLights(AppState& app) {
 }
 
 void drawVolcano() {
+    bindRockTexture();
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
     float segments = 32;
     float volcanoHeight = 4.0f;
     float baseRadius = 3.5f;
@@ -130,39 +134,55 @@ void drawVolcano() {
         float r3 = craterRadius * 1.3f;
         float r4 = craterRadius;
 
+        float u1 = (float)i / (float)segments;
+        float u2 = (float)(i + 1) / (float)segments;
+        float v1 = 0.0f;
+        float v2 = 0.5f;
+        float v3 = 0.85f;
+        float v4 = 1.0f;
+
         glBegin(GL_TRIANGLE_STRIP);
 
-        // Side of volcano
         glNormal3f(c1, 0.3f, s1);
+        glTexCoord2f(u1, v1);
         glVertex3f(r1 * c1, y1, r1 * s1);
         glNormal3f(c1, 0.3f, s1);
+        glTexCoord2f(u1, v2);
         glVertex3f(r2 * c1, y2, r2 * s1);
 
         glNormal3f(c2, 0.3f, s2);
+        glTexCoord2f(u2, v1);
         glVertex3f(r1 * c2, y1, r1 * s2);
         glNormal3f(c2, 0.3f, s2);
+        glTexCoord2f(u2, v2);
         glVertex3f(r2 * c2, y2, r2 * s2);
 
-        // Upper side
         glNormal3f(c1, 0.8f, s1);
+        glTexCoord2f(u1, v2);
         glVertex3f(r2 * c1, y2, r2 * s1);
         glNormal3f(c1, 0.8f, s1);
+        glTexCoord2f(u1, v3);
         glVertex3f(r3 * c1, y3, r3 * s1);
 
         glNormal3f(c2, 0.8f, s2);
+        glTexCoord2f(u2, v2);
         glVertex3f(r2 * c2, y2, r2 * s2);
         glNormal3f(c2, 0.8f, s2);
+        glTexCoord2f(u2, v3);
         glVertex3f(r3 * c2, y3, r3 * s2);
 
-        // Crater rim
         glNormal3f(c1, -0.3f, s1);
+        glTexCoord2f(u1, v3);
         glVertex3f(r3 * c1, y3, r3 * s1);
         glNormal3f(c1, -0.3f, s1);
+        glTexCoord2f(u1, v4);
         glVertex3f(r4 * c1, y4, r4 * s1);
 
         glNormal3f(c2, -0.3f, s2);
+        glTexCoord2f(u2, v3);
         glVertex3f(r3 * c2, y3, r3 * s2);
         glNormal3f(c2, -0.3f, s2);
+        glTexCoord2f(u2, v4);
         glVertex3f(r4 * c2, y4, r4 * s2);
 
         glEnd();
@@ -170,6 +190,9 @@ void drawVolcano() {
 }
 
 void drawLavaLake() {
+    bindLavaTexture();
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
     float segments = 24;
     float innerRadius = 1.5f;
     float outerRadius = 3.0f;
@@ -179,14 +202,21 @@ void drawLavaLake() {
         float a = i * 2.0f * 3.14159265f / segments;
         float c = cos(a), s = sin(a);
 
+        float u = (float)i / (float)segments;
+
         glNormal3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(u, 0.0f);
         glVertex3f(innerRadius * c, -0.05f, innerRadius * s);
+        glTexCoord2f(u, 1.0f);
         glVertex3f(outerRadius * c, -0.05f, outerRadius * s);
     }
     glEnd();
 }
 
 void drawSmokeCloud() {
+    bindSmokeTexture();
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
     glPushMatrix();
     glTranslatef(0.0f, 5.5f, 0.0f);
     glutSolidSphere(0.8f, 16, 12);

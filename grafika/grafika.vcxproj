@@ -128,9 +128,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="volcano.cpp" />
+    <ClCompile Include="textures.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="volcano.h" />
+    <ClInclude Include="textures.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
