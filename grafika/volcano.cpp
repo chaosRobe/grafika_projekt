@@ -17,6 +17,12 @@ void initAppState(AppState& app) {
     app.smokeScale = 1.0f;
     app.smokeOffsetX = 0.0f;
     app.smokeOffsetZ = 0.0f;
+    app.mouseDragging = false;
+    app.lastMouseX = 0;
+    app.lastMouseY = 0;
+    app.moonAngle = 0.0f;
+    app.skyboxTextureID = 0;
+    app.sunTextureID = 0;
 
     app.lights.lavaIntensity = 0.3f;
     app.lights.lavaR = 1.0f;
@@ -315,12 +321,24 @@ void drawParticles(AppState& app) {
         if (!app.particles[i].active) continue;
 
         float alpha = app.particles[i].life / app.particles[i].maxLife;
-        float r = 1.0f;
-        float g = 0.2f + 0.5f * alpha;
-        float b = 0.0f;
+        float r, g, b;
+
+        if (g_app.state == VolcanoState::ACTIVE) {
+            r = 0.9f;
+            g = 0.3f + 0.4f * alpha;
+            b = 0.05f;
+        } else if (g_app.state == VolcanoState::ERUPTION) {
+            r = 1.0f;
+            g = 0.15f + 0.6f * alpha;
+            b = 0.02f;
+        } else {
+            r = 1.0f;
+            g = 0.2f + 0.5f * alpha;
+            b = 0.0f;
+        }
 
         glColor4f(r, g, b, alpha);
-        glPointSize(3.0f + alpha * 3.0f);
+        glPointSize(2.5f + alpha * 4.0f);
 
         glBegin(GL_POINTS);
         glVertex3f(app.particles[i].x, app.particles[i].y, app.particles[i].z);
@@ -408,49 +426,123 @@ void displayScene(AppState& app) {
         0.0f, 1.0f, 0.0f
     );
 
+    drawSkybox();
+    drawSun();
+
     updateLights(app);
 
-    float lavaColor[] = { 0.3f, 0.25f, 0.2f, 1.0f };
-    float lavaEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float volcanoAmbient[] = { 0.2f, 0.18f, 0.15f, 1.0f };
+    float volcanoDiffuse[] = { 0.3f, 0.25f, 0.2f, 1.0f };
+    float volcanoSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    float volcanoEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float volcanoShininess = 5.0f;
 
-    if (app.state == VolcanoState::ACTIVE) {
-        lavaColor[0] = 0.45f; lavaColor[1] = 0.3f; lavaColor[2] = 0.2f;
-        lavaEmissive[0] = 0.1f; lavaEmissive[1] = 0.05f;
+    if (app.state == VolcanoState::DORMANT) {
+        volcanoAmbient[0] = 0.2f; volcanoAmbient[1] = 0.18f; volcanoAmbient[2] = 0.15f;
+        volcanoDiffuse[0] = 0.3f; volcanoDiffuse[1] = 0.25f; volcanoDiffuse[2] = 0.2f;
+        volcanoEmissive[0] = 0.0f; volcanoEmissive[1] = 0.0f; volcanoEmissive[2] = 0.0f;
+        volcanoShininess = 5.0f;
+    } else if (app.state == VolcanoState::ACTIVE) {
+        volcanoAmbient[0] = 0.35f; volcanoAmbient[1] = 0.2f; volcanoAmbient[2] = 0.1f;
+        volcanoDiffuse[0] = 0.45f; volcanoDiffuse[1] = 0.3f; volcanoDiffuse[2] = 0.15f;
+        float pulse = 0.08f + 0.05f * sin(app.stateTimer * 3.0f);
+        volcanoEmissive[0] = pulse;
+        volcanoEmissive[1] = pulse * 0.4f;
+        volcanoEmissive[2] = 0.0f;
+        volcanoShininess = 10.0f;
     } else if (app.state == VolcanoState::ERUPTION) {
-        lavaColor[0] = 0.55f; lavaColor[1] = 0.3f; lavaColor[2] = 0.15f;
-        float pulse = 0.15f + 0.1f * sin(app.stateTimer * 5.0f);
-        lavaEmissive[0] = pulse; lavaEmissive[1] = pulse * 0.5f;
+        volcanoAmbient[0] = 0.5f; volcanoAmbient[1] = 0.25f; volcanoAmbient[2] = 0.05f;
+        volcanoDiffuse[0] = 0.55f; volcanoDiffuse[1] = 0.35f; volcanoDiffuse[2] = 0.1f;
+        float pulse = 0.2f + 0.15f * sin(app.stateTimer * 6.0f);
+        volcanoEmissive[0] = pulse;
+        volcanoEmissive[1] = pulse * 0.5f;
+        volcanoEmissive[2] = 0.0f;
+        volcanoShininess = 15.0f;
     }
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT, lavaColor);
-    glMaterialfv(GL_FRONT, GL_EMISSION, lavaEmissive);
+    glMaterialfv(GL_FRONT, GL_AMBIENT, volcanoAmbient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, volcanoDiffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, volcanoSpecular);
+    glMaterialfv(GL_FRONT, GL_EMISSION, volcanoEmissive);
+    glMaterialf(GL_FRONT, GL_SHININESS, volcanoShininess);
 
-    float terrainColor[] = { 0.35f, 0.3f, 0.25f, 1.0f };
+    float terrainAmbient[] = { 0.25f, 0.22f, 0.18f, 1.0f };
+    float terrainDiffuse[] = { 0.35f, 0.3f, 0.25f, 1.0f };
+    float terrainSpecular[] = { 0.05f, 0.05f, 0.05f, 1.0f };
     float terrainEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT, terrainColor);
+
+    if (app.state == VolcanoState::ERUPTION) {
+        float glow = 0.05f + 0.03f * sin(app.stateTimer * 4.0f);
+        terrainEmissive[0] = glow;
+        terrainEmissive[1] = glow * 0.3f;
+        terrainAmbient[0] += 0.1f;
+        terrainAmbient[1] += 0.03f;
+    }
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, terrainAmbient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, terrainDiffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, terrainSpecular);
     glMaterialfv(GL_FRONT, GL_EMISSION, terrainEmissive);
     glMaterialf(GL_FRONT, GL_SHININESS, 8.0f);
     drawTerrain();
 
     drawVolcano();
 
-    float lakeColor[] = { 0.6f, 0.2f, 0.05f, 1.0f };
-    float lakeEmissive[] = { 0.3f, 0.1f, 0.0f, 1.0f };
-    glMaterialfv(GL_FRONT, GL_AMBIENT, lakeColor);
+    float lakeAmbient[] = { 0.4f, 0.15f, 0.02f, 1.0f };
+    float lakeDiffuse[] = { 0.6f, 0.2f, 0.05f, 1.0f };
+    float lakeSpecular[] = { 0.8f, 0.5f, 0.2f, 1.0f };
+    float lakeEmissive[] = { 0.2f, 0.08f, 0.0f, 1.0f };
+    float lakeShininess = 80.0f;
+
+    if (app.state == VolcanoState::DORMANT) {
+        lakeAmbient[0] = 0.15f; lakeAmbient[1] = 0.05f; lakeAmbient[2] = 0.01f;
+        lakeDiffuse[0] = 0.2f; lakeDiffuse[1] = 0.08f; lakeDiffuse[2] = 0.02f;
+        lakeEmissive[0] = 0.05f; lakeEmissive[1] = 0.02f; lakeEmissive[2] = 0.0f;
+        lakeShininess = 40.0f;
+    } else if (app.state == VolcanoState::ACTIVE) {
+        float pulse = 0.15f + 0.1f * sin(app.stateTimer * 2.5f);
+        lakeEmissive[0] = pulse;
+        lakeEmissive[1] = pulse * 0.5f;
+        lakeShininess = 70.0f;
+    } else if (app.state == VolcanoState::ERUPTION) {
+        float pulse = 0.35f + 0.2f * sin(app.stateTimer * 5.0f);
+        lakeEmissive[0] = pulse;
+        lakeEmissive[1] = pulse * 0.7f;
+        lakeEmissive[2] = pulse * 0.1f;
+        lakeShininess = 100.0f;
+    }
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, lakeAmbient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, lakeDiffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, lakeSpecular);
     glMaterialfv(GL_FRONT, GL_EMISSION, lakeEmissive);
-    glMaterialf(GL_FRONT, GL_SHININESS, 80.0f);
+    glMaterialf(GL_FRONT, GL_SHININESS, lakeShininess);
     drawLavaLake();
 
     if (app.state != VolcanoState::DORMANT) {
-        float smokeAlpha = 0.4f;
-        if (app.state == VolcanoState::ERUPTION) smokeAlpha = 0.7f;
+        float smokeAlpha = 0.35f;
+        float smokeR = 0.35f, smokeG = 0.3f, smokeB = 0.28f;
+        float smokeEmissiveR = 0.0f, smokeEmissiveG = 0.0f;
+
+        if (app.state == VolcanoState::ACTIVE) {
+            smokeAlpha = 0.45f;
+            smokeR = 0.4f; smokeG = 0.32f; smokeB = 0.25f;
+            smokeEmissiveR = 0.05f + 0.03f * sin(app.stateTimer * 2.0f);
+            smokeEmissiveG = smokeEmissiveR * 0.3f;
+        } else if (app.state == VolcanoState::ERUPTION) {
+            smokeAlpha = 0.65f;
+            smokeR = 0.5f; smokeG = 0.3f; smokeB = 0.15f;
+            smokeEmissiveR = 0.12f + 0.08f * sin(app.stateTimer * 4.0f);
+            smokeEmissiveG = smokeEmissiveR * 0.4f;
+        }
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        float smokeColor[] = { 0.4f, 0.3f, 0.25f, smokeAlpha };
-        glMaterialfv(GL_FRONT, GL_AMBIENT, smokeColor);
-        glMaterialfv(GL_FRONT, GL_EMISSION, smokeColor);
+        float smokeAmbient[] = { smokeR, smokeG, smokeB, smokeAlpha };
+        float smokeEmissive[] = { smokeEmissiveR, smokeEmissiveG, 0.0f, 1.0f };
+        glMaterialfv(GL_FRONT, GL_AMBIENT, smokeAmbient);
+        glMaterialfv(GL_FRONT, GL_EMISSION, smokeEmissive);
 
         drawSmokeCloud();
         glDisable(GL_BLEND);
@@ -532,7 +624,36 @@ void specialKeys(AppState& app, int key, int x, int y) {
 
 void mouse(AppState& app, int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
-        app.isAnimating = !app.isAnimating;
+        app.mouseDragging = true;
+        app.lastMouseX = x;
+        app.lastMouseY = y;
+    } else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+        app.mouseDragging = false;
+    } else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+        app.cameraDist -= 1.0f;
+        if (app.cameraDist < 5.0f) app.cameraDist = 5.0f;
+        glutPostRedisplay();
+    } else if (button == 3 && state == GLUT_DOWN) {
+        app.cameraDist -= 1.0f;
+        if (app.cameraDist < 5.0f) app.cameraDist = 5.0f;
+        glutPostRedisplay();
+    } else if (button == 4 && state == GLUT_DOWN) {
+        app.cameraDist += 1.0f;
+        if (app.cameraDist > 25.0f) app.cameraDist = 25.0f;
+        glutPostRedisplay();
+    }
+}
+
+void mouseMotion(AppState& app, int x, int y) {
+    if (app.mouseDragging) {
+        int dx = x - app.lastMouseX;
+        int dy = y - app.lastMouseY;
+        app.cameraAngle += dx * 0.5f;
+        app.cameraHeight -= dy * 0.1f;
+        if (app.cameraHeight < 2.0f) app.cameraHeight = 2.0f;
+        if (app.cameraHeight > 20.0f) app.cameraHeight = 20.0f;
+        app.lastMouseX = x;
+        app.lastMouseY = y;
     }
 }
 
@@ -616,4 +737,138 @@ void timerFunc(int value) {
     }
 
     glutPostRedisplay();
+}
+
+void initSkybox(AppState& app) {
+    const int texSize = 256;
+    unsigned char* texData = new unsigned char[texSize * texSize * 4];
+
+    for (int y = 0; y < texSize; y++) {
+        for (int x = 0; x < texSize; x++) {
+            int idx = (y * texSize + x) * 4;
+            float ny = (float)y / (float)texSize;
+
+            float r, g, b;
+            if (ny < 0.5f) {
+                float t = ny * 2.0f;
+                r = 10.0f + t * 30.0f;
+                g = 15.0f + t * 50.0f;
+                b = 40.0f + t * 120.0f;
+            } else {
+                float t = (ny - 0.5f) * 2.0f;
+                r = 40.0f + t * 80.0f;
+                g = 65.0f + t * 100.0f;
+                b = 160.0f + t * 80.0f;
+            }
+
+            texData[idx] = (unsigned char)fmin(255.0f, fmax(0.0f, r));
+            texData[idx + 1] = (unsigned char)fmin(255.0f, fmax(0.0f, g));
+            texData[idx + 2] = (unsigned char)fmin(255.0f, fmax(0.0f, b));
+            texData[idx + 3] = 255;
+        }
+    }
+
+    glGenTextures(1, &app.skyboxTextureID);
+    glBindTexture(GL_TEXTURE_2D, app.skyboxTextureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texSize, texSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    delete[] texData;
+}
+
+void initSun(AppState& app) {
+    const int texSize = 64;
+    unsigned char* texData = new unsigned char[texSize * texSize * 4];
+
+    for (int y = 0; y < texSize; y++) {
+        for (int x = 0; x < texSize; x++) {
+            int idx = (y * texSize + x) * 4;
+            float cx = (float)x / (float)texSize * 2.0f - 1.0f;
+            float cy = (float)y / (float)texSize * 2.0f - 1.0f;
+            float dist = sqrt(cx * cx + cy * cy);
+
+            float alpha = 255.0f * (1.0f - fmin(1.0f, dist * 1.5f));
+            float glow = exp(-dist * 3.0f) * 255.0f;
+
+            texData[idx] = (unsigned char)fmin(255.0f, 255.0f);
+            texData[idx + 1] = (unsigned char)fmin(255.0f, 200.0f + glow * 0.3f);
+            texData[idx + 2] = (unsigned char)fmin(255.0f, 100.0f + glow * 0.5f);
+            texData[idx + 3] = (unsigned char)fmax(0.0f, fmin(255.0f, alpha));
+        }
+    }
+
+    glGenTextures(1, &app.sunTextureID);
+    glBindTexture(GL_TEXTURE_2D, app.sunTextureID);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texSize, texSize, 0, GL_RGBA, GL_UNSIGNED_BYTE, texData);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    delete[] texData;
+}
+
+void drawSkybox() {
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, g_app.skyboxTextureID);
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+
+    float size = 80.0f;
+    float topY = size * 0.6f;
+    float botY = -size * 0.3f;
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, botY, -size);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, botY, -size);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, topY, -size);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, topY, -size);
+
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, botY, size);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, botY, size);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, topY, size);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, topY, size);
+
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, botY, size);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, botY, -size);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, topY, -size);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, topY, size);
+
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, botY, -size);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, botY, size);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, topY, size);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, topY, -size);
+    glEnd();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+}
+
+void drawSun() {
+    float sunX = 25.0f * cos(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunY = 15.0f + 10.0f * sin(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunZ = 25.0f * sin(g_app.moonAngle * 3.14159265f / 180.0f);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, g_app.sunTextureID);
+    glDisable(GL_LIGHTING);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+
+    glPushMatrix();
+    glTranslatef(sunX, sunY, sunZ);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.5f, -1.5f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(1.5f, -1.5f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(1.5f, 1.5f, 0.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.5f, 1.5f, 0.0f);
+    glEnd();
+    glPopMatrix();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
 }

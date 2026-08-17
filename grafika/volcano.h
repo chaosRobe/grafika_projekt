@@ -38,6 +38,12 @@ struct AppState {
     float smokeScale;
     float smokeOffsetX;
     float smokeOffsetZ;
+    bool mouseDragging;
+    int lastMouseX;
+    int lastMouseY;
+    float moonAngle;
+    GLuint skyboxTextureID;
+    GLuint sunTextureID;
 };
 
 void initAppState(AppState& app);
@@ -60,3 +66,9 @@ void createMenu(AppState& app);
 void menuCallback(AppState& app, int value);
 void reshape(int w, int h);
 void timerFunc(int value);
+void drawSkybox();
+void drawSun();
+void initSkybox(AppState& app);
+void initSun(AppState& app);
+void mouseMotion(AppState& app, int x, int y);
+void mouseWheel(AppState& app, int button, int x, int y);

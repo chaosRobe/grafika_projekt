@@ -12,6 +12,8 @@ int main(int argc, char** argv) {
 
     initAppState(g_app);
     initTextures(g_app);
+    initSkybox(g_app);
+    initSun(g_app);
     initOpenGL(g_app);
 
     glutDisplayFunc([]() { displayScene(g_app); });
@@ -19,6 +21,7 @@ int main(int argc, char** argv) {
     glutKeyboardFunc([](unsigned char k, int x, int y) { keyboard(g_app, k, x, y); });
     glutSpecialFunc([](int k, int x, int y) { specialKeys(g_app, k, x, y); });
     glutMouseFunc([](int b, int s, int x, int y) { mouse(g_app, b, s, x, y); });
+    glutMotionFunc([](int x, int y) { mouseMotion(g_app, x, y); });
     glutTimerFunc(16, timerFunc, 0);
 
     createMenu(g_app);
