@@ -34,6 +34,10 @@ struct AppState {
     float cameraAngle;
     float cameraHeight;
     bool isAnimating;
+    float smokeY;
+    float smokeScale;
+    float smokeOffsetX;
+    float smokeOffsetZ;
 };
 
 void initAppState(AppState& app);
@@ -43,6 +47,7 @@ void initLights(AppState& app);
 void updateLights(AppState& app);
 void drawVolcano();
 void drawLavaLake();
+void drawTerrain();
 void drawSmokeCloud();
 void drawParticles(AppState& app);
 void updateParticles(AppState& app, float deltaTime);

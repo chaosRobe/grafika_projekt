@@ -13,6 +13,10 @@ void initAppState(AppState& app) {
     app.cameraAngle = 45.0f;
     app.cameraHeight = 8.0f;
     app.isAnimating = true;
+    app.smokeY = 5.5f;
+    app.smokeScale = 1.0f;
+    app.smokeOffsetX = 0.0f;
+    app.smokeOffsetZ = 0.0f;
 
     app.lights.lavaIntensity = 0.3f;
     app.lights.lavaR = 1.0f;
@@ -213,22 +217,95 @@ void drawLavaLake() {
     glEnd();
 }
 
+void drawTerrain() {
+    bindRockTexture();
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+    int gridSize = 40;
+    float size = 30.0f;
+    float step = size / (float)gridSize;
+
+    for (int i = 0; i < gridSize; i++) {
+        for (int j = 0; j < gridSize; j++) {
+            float x1 = -size / 2.0f + (float)i * step;
+            float x2 = -size / 2.0f + (float)(i + 1) * step;
+            float z1 = -size / 2.0f + (float)j * step;
+            float z2 = -size / 2.0f + (float)(j + 1) * step;
+
+            float h1 = sin(x1 * 0.5f) * cos(z1 * 0.5f) * 0.3f;
+            float h2 = sin(x2 * 0.5f) * cos(z1 * 0.5f) * 0.3f;
+            float h3 = sin(x1 * 0.5f) * cos(z2 * 0.5f) * 0.3f;
+            float h4 = sin(x2 * 0.5f) * cos(z2 * 0.5f) * 0.3f;
+
+            float u1 = (float)i / (float)gridSize * 6.0f;
+            float u2 = (float)(i + 1) / (float)gridSize * 6.0f;
+            float v1 = (float)j / (float)gridSize * 6.0f;
+            float v2 = (float)(j + 1) / (float)gridSize * 6.0f;
+
+            float nx1 = sin(x1 * 0.3f) * 0.2f;
+            float nz1 = cos(z1 * 0.3f) * 0.2f;
+            float nx2 = sin(x2 * 0.3f) * 0.2f;
+            float nz2 = cos(z2 * 0.3f) * 0.2f;
+
+            glBegin(GL_QUADS);
+            glNormal3f(nx1, 1.0f, nz1);
+            glTexCoord2f(u1, v1);
+            glVertex3f(x1, h1, z1);
+            glNormal3f(nx2, 1.0f, nz2);
+            glTexCoord2f(u2, v1);
+            glVertex3f(x2, h2, z1);
+            glNormal3f(nx2, 1.0f, nz2);
+            glTexCoord2f(u2, v2);
+            glVertex3f(x2, h4, z2);
+            glNormal3f(nx1, 1.0f, nz1);
+            glTexCoord2f(u1, v2);
+            glVertex3f(x1, h3, z2);
+            glEnd();
+        }
+    }
+}
+
 void drawSmokeCloud() {
     bindSmokeTexture();
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+    float baseY = g_app.smokeY;
+    float baseScale = g_app.smokeScale;
+    float offsetX = g_app.smokeOffsetX;
+    float offsetZ = g_app.smokeOffsetZ;
+
+    if (g_app.state == VolcanoState::DORMANT) {
+        baseY = 5.5f;
+        baseScale = 0.6f;
+        offsetX = 0.0f;
+        offsetZ = 0.0f;
+    } else if (g_app.state == VolcanoState::ACTIVE) {
+        baseY = 5.5f + sin(g_app.stateTimer * 0.8f) * 0.3f;
+        baseScale = 0.9f + sin(g_app.stateTimer * 1.2f) * 0.15f;
+        offsetX = sin(g_app.stateTimer * 0.5f) * 0.2f;
+        offsetZ = cos(g_app.stateTimer * 0.6f) * 0.2f;
+    } else if (g_app.state == VolcanoState::ERUPTION) {
+        baseY = 5.5f + sin(g_app.stateTimer * 1.5f) * 0.8f;
+        baseScale = 1.2f + sin(g_app.stateTimer * 2.0f) * 0.4f;
+        offsetX = sin(g_app.stateTimer * 1.0f) * 0.5f;
+        offsetZ = cos(g_app.stateTimer * 1.2f) * 0.5f;
+    }
+
     glPushMatrix();
-    glTranslatef(0.0f, 5.5f, 0.0f);
+    glTranslatef(offsetX, baseY, offsetZ);
+    glScalef(baseScale, baseScale * 0.7f, baseScale);
     glutSolidSphere(0.8f, 16, 12);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(-0.5f, 6.2f, 0.3f);
+    glTranslatef(offsetX - 0.6f, baseY + 0.5f, offsetZ + 0.4f);
+    glScalef(baseScale * 0.7f, baseScale * 0.5f, baseScale * 0.7f);
     glutSolidSphere(0.5f, 12, 10);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(0.4f, 6.0f, -0.3f);
+    glTranslatef(offsetX + 0.5f, baseY + 0.3f, offsetZ - 0.4f);
+    glScalef(baseScale * 0.8f, baseScale * 0.6f, baseScale * 0.8f);
     glutSolidSphere(0.6f, 12, 10);
     glPopMatrix();
 }
@@ -347,6 +424,13 @@ void displayScene(AppState& app) {
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, lavaColor);
     glMaterialfv(GL_FRONT, GL_EMISSION, lavaEmissive);
+
+    float terrainColor[] = { 0.35f, 0.3f, 0.25f, 1.0f };
+    float terrainEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    glMaterialfv(GL_FRONT, GL_AMBIENT, terrainColor);
+    glMaterialfv(GL_FRONT, GL_EMISSION, terrainEmissive);
+    glMaterialf(GL_FRONT, GL_SHININESS, 8.0f);
+    drawTerrain();
 
     drawVolcano();
 
@@ -513,6 +597,23 @@ void timerFunc(int value) {
 
     updateParticles(g_app, dt);
     emitParticles(g_app);
+
+    if (g_app.state != VolcanoState::DORMANT) {
+        g_app.smokeOffsetX += sin(g_app.stateTimer * 0.7f) * 0.003f;
+        g_app.smokeOffsetZ += cos(g_app.stateTimer * 0.9f) * 0.003f;
+        if (g_app.state == VolcanoState::ERUPTION) {
+            g_app.smokeScale = 1.0f + sin(g_app.stateTimer * 3.0f) * 0.15f;
+            g_app.smokeY = 5.5f + sin(g_app.stateTimer * 2.0f) * 0.3f;
+        } else {
+            g_app.smokeScale = 1.0f + sin(g_app.stateTimer * 1.5f) * 0.08f;
+            g_app.smokeY = 5.5f + sin(g_app.stateTimer * 1.0f) * 0.15f;
+        }
+    } else {
+        g_app.smokeY = 5.5f;
+        g_app.smokeScale = 0.6f;
+        g_app.smokeOffsetX *= 0.95f;
+        g_app.smokeOffsetZ *= 0.95f;
+    }
 
     glutPostRedisplay();
 }
