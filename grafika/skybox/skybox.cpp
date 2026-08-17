@@ -86,38 +86,64 @@ void drawSkybox() {
 
     glDisable(GL_LIGHTING);
     glDepthMask(GL_FALSE);
+    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_COLOR_MATERIAL);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, g_app.skyboxTextureID);
-
-    float size = 80.0f;
+    float size = 200.0f;
     float topY = size * 0.6f;
     float botY = -size * 0.3f;
 
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, botY, -size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, botY, -size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, topY, -size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, topY, -size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(-size, botY, -size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(size, botY, -size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(size, topY, -size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(-size, topY, -size);
 
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, botY, size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, botY, size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, topY, size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, topY, size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(size, botY, size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(-size, botY, size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(-size, topY, size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(size, topY, size);
 
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-size, botY, size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(-size, botY, -size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(-size, topY, -size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-size, topY, size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(-size, botY, size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(-size, botY, -size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(-size, topY, -size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(-size, topY, size);
 
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(size, botY, -size);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(size, botY, size);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(size, topY, size);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(size, topY, -size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(size, botY, -size);
+    glColor3f(0.04f, 0.06f, 0.15f);
+    glVertex3f(size, botY, size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(size, topY, size);
+    glColor3f(0.16f, 0.26f, 0.56f);
+    glVertex3f(size, topY, -size);
+
+    glColor3f(0.20f, 0.30f, 0.65f);
+    glVertex3f(-size, topY, -size);
+    glColor3f(0.20f, 0.30f, 0.65f);
+    glVertex3f(size, topY, -size);
+    glColor3f(0.20f, 0.30f, 0.65f);
+    glVertex3f(size, topY, size);
+    glColor3f(0.20f, 0.30f, 0.65f);
+    glVertex3f(-size, topY, size);
     glEnd();
 
+    glDisable(GL_COLOR_MATERIAL);
     glDepthMask(GL_TRUE);
     glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
     glPopMatrix();
 }
 
