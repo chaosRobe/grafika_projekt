@@ -143,14 +143,17 @@ void initTextures(AppState& app) {
 }
 
 void bindRockTexture() {
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, rockTextureID);
 }
 
 void bindLavaTexture() {
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, lavaTextureID);
 }
 
 void bindSmokeTexture() {
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, smokeTextureID);
 }
 

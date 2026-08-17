@@ -58,8 +58,8 @@ void initSun(AppState& app) {
             float glow = expf(-dist * 3.0f) * 255.0f;
 
             texData[idx] = (unsigned char)fmin(255.0f, 255.0f);
-            texData[idx + 1] = (unsigned char)fmin(255.0f, 200.0f + glow * 0.3f);
-            texData[idx + 2] = (unsigned char)fmin(255.0f, 100.0f + glow * 0.5f);
+            texData[idx + 1] = (unsigned char)fmin(255.0f, 230.0f + glow * 0.4f);
+            texData[idx + 2] = (unsigned char)fmin(255.0f, 50.0f + glow * 0.2f);
             texData[idx + 3] = (unsigned char)fmax(0.0f, fmin(255.0f, alpha));
         }
     }
@@ -148,26 +148,29 @@ void drawSkybox() {
 }
 
 void drawSun() {
-    float sunX = 25.0f * cosf(g_app.moonAngle * 3.14159265f / 180.0f);
-    float sunY = 15.0f + 10.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
-    float sunZ = 25.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunX = 30.0f * cosf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunY = 25.0f + 10.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunZ = 30.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
 
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, g_app.sunTextureID);
     glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    glDisable(GL_DEPTH_TEST);
 
     glPushMatrix();
     glTranslatef(sunX, sunY, sunZ);
+    glRotatef(-g_app.cameraAngle, 0.0f, 1.0f, 0.0f);
     glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.5f, -1.5f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(1.5f, -1.5f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(1.5f, 1.5f, 0.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.5f, 1.5f, 0.0f);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(-4.0f, -4.0f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(4.0f, -4.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(4.0f, 4.0f, 0.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(-4.0f, 4.0f, 0.0f);
     glEnd();
     glPopMatrix();
 
+    glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glEnable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
