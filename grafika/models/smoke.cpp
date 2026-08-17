@@ -4,47 +4,86 @@
 
 extern AppState g_app;
 
-void drawSmokeCloud() {
-    bindSmokeTexture();
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+struct SmokeParticle {
+    float x, y, z;
+    float vx, vy, vz;
+    float size;
+    float life;
+    float maxLife;
+};
 
-    float baseY = g_app.smokeY;
-    float baseScale = g_app.smokeScale;
-    float offsetX = g_app.smokeOffsetX;
-    float offsetZ = g_app.smokeOffsetZ;
+static SmokeParticle smokeParticles[100];
+static int smokeParticleCount = 0;
 
-    if (g_app.state == VolcanoState::DORMANT) {
-        baseY = 5.5f;
-        baseScale = 0.6f;
-        offsetX = 0.0f;
-        offsetZ = 0.0f;
-    } else if (g_app.state == VolcanoState::ACTIVE) {
-        baseY = 5.5f + sin(g_app.stateTimer * 0.8f) * 0.3f;
-        baseScale = 0.9f + sin(g_app.stateTimer * 1.2f) * 0.15f;
-        offsetX = sin(g_app.stateTimer * 0.5f) * 0.2f;
-        offsetZ = cos(g_app.stateTimer * 0.6f) * 0.2f;
-    } else if (g_app.state == VolcanoState::ERUPTION) {
-        baseY = 5.5f + sin(g_app.stateTimer * 1.5f) * 0.8f;
-        baseScale = 1.2f + sin(g_app.stateTimer * 2.0f) * 0.4f;
-        offsetX = sin(g_app.stateTimer * 1.0f) * 0.5f;
-        offsetZ = cos(g_app.stateTimer * 1.2f) * 0.5f;
+void initSmokeParticles() {
+    smokeParticleCount = 0;
+}
+
+void updateSmokeParticles(float dt) {
+    for (int i = smokeParticleCount - 1; i >= 0; i--) {
+        SmokeParticle& p = smokeParticles[i];
+        p.life -= dt;
+        if (p.life <= 0) {
+            smokeParticles[i] = smokeParticles[smokeParticleCount - 1];
+            smokeParticleCount--;
+            continue;
+        }
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.z += p.vz * dt;
+        p.vy *= 0.995f;
+        p.vx *= 0.99f;
+        p.vz *= 0.99f;
+        p.size += dt * 0.8f;
     }
 
-    glPushMatrix();
-    glTranslatef(offsetX, baseY, offsetZ);
-    glScalef(baseScale, baseScale * 0.7f, baseScale);
-    glutSolidSphere(0.8f, 16, 12);
-    glPopMatrix();
+    if (g_app.state != VolcanoState::DORMANT && smokeParticleCount < 100) {
+        float emissionRate = (g_app.state == VolcanoState::ERUPTION) ? 5.0f : 2.5f;
+        for (int i = 0; i < (int)emissionRate && smokeParticleCount < 100; i++) {
+            SmokeParticle& p = smokeParticles[smokeParticleCount++];
+            p.x = (float)(rand() % 100) / 100.0f * 0.3f - 0.15f;
+            p.y = 5.2f;
+            p.z = (float)(rand() % 100) / 100.0f * 0.3f - 0.15f;
+            p.vx = (float)(rand() % 1000) / 1000.0f * 0.3f - 0.15f;
+            p.vy = 3.0f + (float)(rand() % 100) / 100.0f * 2.0f;
+            p.vz = (float)(rand() % 1000) / 1000.0f * 0.3f - 0.15f;
+            p.size = 0.25f + (float)(rand() % 50) / 100.0f * 0.25f;
+            p.life = 4.0f + (float)(rand() % 100) / 100.0f * 2.0f;
+            p.maxLife = p.life;
+        }
+    }
+}
 
+void drawSmokeCloud() {
     glPushMatrix();
-    glTranslatef(offsetX - 0.6f, baseY + 0.5f, offsetZ + 0.4f);
-    glScalef(baseScale * 0.7f, baseScale * 0.5f, baseScale * 0.7f);
-    glutSolidSphere(0.5f, 12, 10);
-    glPopMatrix();
+    glDisable(GL_LIGHTING);
+    glDisable(GL_TEXTURE_2D);
 
-    glPushMatrix();
-    glTranslatef(offsetX + 0.5f, baseY + 0.3f, offsetZ - 0.4f);
-    glScalef(baseScale * 0.8f, baseScale * 0.6f, baseScale * 0.8f);
-    glutSolidSphere(0.6f, 12, 10);
+    updateSmokeParticles(0.016f);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    for (int i = 0; i < smokeParticleCount; i++) {
+        SmokeParticle& p = smokeParticles[i];
+        float alpha = p.life / p.maxLife;
+        float heightRatio = fmin(1.0f, p.y / 15.0f);
+        float expand = 0.5f + (1.0f - alpha) * 0.3f;
+
+        float xzScale = expand * (1.0f + heightRatio * 6.0f);
+        float yScale = expand * (1.0f + heightRatio * 0.2f);
+
+        float gray = 0.25f + alpha * 0.2f;
+        glColor4f(gray, gray, gray, 0.3f);
+        glPushMatrix();
+        glTranslatef(p.x, p.y, p.z);
+        glScalef(xzScale * 2.0f, yScale * 2.0f, xzScale * 2.0f);
+        glutSolidSphere(0.3f, 8, 6);
+        glPopMatrix();
+    }
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_TEXTURE_2D);
     glPopMatrix();
 }

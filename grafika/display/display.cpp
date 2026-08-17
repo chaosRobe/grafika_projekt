@@ -133,7 +133,9 @@ void displayScene(AppState& app) {
         glMaterialfv(GL_FRONT, GL_AMBIENT, smokeAmbient);
         glMaterialfv(GL_FRONT, GL_EMISSION, smokeEmissive);
 
+        glDisable(GL_DEPTH_TEST);
         drawSmokeCloud();
+        glEnable(GL_DEPTH_TEST);
         glDisable(GL_BLEND);
     }
 

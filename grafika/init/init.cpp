@@ -13,10 +13,6 @@ void initAppState(AppState& app) {
     app.cameraAngle = 45.0f;
     app.cameraHeight = 8.0f;
     app.isAnimating = true;
-    app.smokeY = 5.5f;
-    app.smokeScale = 1.0f;
-    app.smokeOffsetX = 0.0f;
-    app.smokeOffsetZ = 0.0f;
     app.mouseDragging = false;
     app.lastMouseX = 0;
     app.lastMouseY = 0;
@@ -54,7 +50,7 @@ void resetParticles(AppState& app) {
 }
 
 void initOpenGL(AppState& app) {
-    glClearColor(0.02f, 0.02f, 0.06f, 1.0f);
+    glClearColor(0.45f, 0.6f, 0.85f, 1.0f);
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glShadeModel(GL_SMOOTH);
@@ -68,7 +64,7 @@ void initOpenGL(AppState& app) {
 }
 
 void initLights(AppState& app) {
-    float ambient[] = { 0.02f, 0.01f, 0.0f, 1.0f };
+    float ambient[] = { 0.5f, 0.45f, 0.4f, 1.0f };
     float diffuse[] = { app.lights.lavaR * app.lights.lavaIntensity,
                         app.lights.lavaG * app.lights.lavaIntensity,
                         app.lights.lavaB * app.lights.lavaIntensity, 1.0f };
@@ -81,18 +77,18 @@ void initLights(AppState& app) {
     glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.8f);
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.3f);
 
-    float moonAmbient[] = { 0.05f, 0.06f, 0.12f, 1.0f };
-    float moonDiffuse[] = { app.lights.moonR, app.lights.moonG, app.lights.moonB, 1.0f };
-    float moonSpecular[] = { 0.4f, 0.5f, 0.9f, 1.0f };
+    float moonAmbient[] = { 0.4f, 0.38f, 0.35f, 1.0f };
+    float moonDiffuse[] = { 0.9f, 0.85f, 0.75f, 1.0f };
+    float moonSpecular[] = { 0.8f, 0.75f, 0.7f, 1.0f };
 
     glLightfv(GL_LIGHT1, GL_AMBIENT, moonAmbient);
     glLightfv(GL_LIGHT1, GL_DIFFUSE, moonDiffuse);
     glLightfv(GL_LIGHT1, GL_SPECULAR, moonSpecular);
     glLightfv(GL_LIGHT1, GL_POSITION, app.lights.moonPos);
 
-    float matAmbient[] = { 0.4f, 0.35f, 0.3f, 1.0f };
-    float matDiffuse[] = { 0.5f, 0.45f, 0.35f, 1.0f };
-    float matSpecular[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    float matAmbient[] = { 0.6f, 0.55f, 0.5f, 1.0f };
+    float matDiffuse[] = { 0.7f, 0.65f, 0.6f, 1.0f };
+    float matSpecular[] = { 0.3f, 0.3f, 0.3f, 1.0f };
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, matAmbient);
     glMaterialfv(GL_FRONT, GL_DIFFUSE, matDiffuse);

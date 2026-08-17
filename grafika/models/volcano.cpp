@@ -5,81 +5,109 @@
 void drawVolcano() {
     bindRockTexture();
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+    glShadeModel(GL_FLAT);
 
-    float segments = 32.0f;
-    float volcanoHeight = 4.0f;
-    float baseRadius = 3.5f;
-    float craterRadius = 0.6f;
-    float craterDepth = 0.4f;
+    float baseRadius = 4.5f;
+    float midRadius = 3.2f;
+    float topRadius = 1.0f;
+    float baseHeight = 3.5f;
+    float midHeight = 1.5f;
+    int segs = 32;
 
-    for (int i = 0; i < (int)segments; i++) {
-        float a1 = i * 2.0f * 3.14159265f / segments;
-        float a2 = (i + 1) * 2.0f * 3.14159265f / segments;
+    float avgNx = 0.7f;
+    float avgNy = 0.7f;
+    float avgLen = sqrtf(avgNx * avgNx + avgNy * avgNy);
+    avgNx /= avgLen;
+    avgNy /= avgLen;
 
+    for (int i = 0; i < segs; i++) {
+        float a1 = i * 2.0f * 3.14159265f / segs;
+        float a2 = (i + 1) * 2.0f * 3.14159265f / segs;
         float c1 = cos(a1), s1 = sin(a1);
         float c2 = cos(a2), s2 = sin(a2);
 
-        float y1 = 0.0f;
-        float y2 = volcanoHeight * 0.7f;
-        float y3 = volcanoHeight;
-        float y4 = volcanoHeight - craterDepth;
-
-        float r1 = baseRadius;
-        float r2 = baseRadius * 0.75f;
-        float r3 = craterRadius * 1.3f;
-        float r4 = craterRadius;
-
-        float u1 = (float)i / (float)segments;
-        float u2 = (float)(i + 1) / (float)segments;
-        float v1 = 0.0f;
-        float v2 = 0.5f;
-        float v3 = 0.85f;
-        float v4 = 1.0f;
+        float r1 = baseRadius, r2 = midRadius;
+        float y1 = 0.0f, y2 = baseHeight;
+        float u1 = (float)i / segs, u2 = (float)(i + 1) / segs;
+        float v1 = 0.0f, v2 = 0.7f;
 
         glBegin(GL_TRIANGLE_STRIP);
-
-        glNormal3f(c1, 0.3f, s1);
+        glNormal3f(avgNx * c1, avgNy, avgNx * s1);
         glTexCoord2f(u1, v1);
         glVertex3f(r1 * c1, y1, r1 * s1);
-        glNormal3f(c1, 0.3f, s1);
+        glNormal3f(avgNx * c1, avgNy, avgNx * s1);
         glTexCoord2f(u1, v2);
         glVertex3f(r2 * c1, y2, r2 * s1);
-
-        glNormal3f(c2, 0.3f, s2);
+        glNormal3f(avgNx * c2, avgNy, avgNx * s2);
         glTexCoord2f(u2, v1);
         glVertex3f(r1 * c2, y1, r1 * s2);
-        glNormal3f(c2, 0.3f, s2);
+        glNormal3f(avgNx * c2, avgNy, avgNx * s2);
         glTexCoord2f(u2, v2);
         glVertex3f(r2 * c2, y2, r2 * s2);
-
-        glNormal3f(c1, 0.8f, s1);
-        glTexCoord2f(u1, v2);
-        glVertex3f(r2 * c1, y2, r2 * s1);
-        glNormal3f(c1, 0.8f, s1);
-        glTexCoord2f(u1, v3);
-        glVertex3f(r3 * c1, y3, r3 * s1);
-
-        glNormal3f(c2, 0.8f, s2);
-        glTexCoord2f(u2, v2);
-        glVertex3f(r2 * c2, y2, r2 * s2);
-        glNormal3f(c2, 0.8f, s2);
-        glTexCoord2f(u2, v3);
-        glVertex3f(r3 * c2, y3, r3 * s2);
-
-        glNormal3f(c1, -0.3f, s1);
-        glTexCoord2f(u1, v3);
-        glVertex3f(r3 * c1, y3, r3 * s1);
-        glNormal3f(c1, -0.3f, s1);
-        glTexCoord2f(u1, v4);
-        glVertex3f(r4 * c1, y4, r4 * s1);
-
-        glNormal3f(c2, -0.3f, s2);
-        glTexCoord2f(u2, v3);
-        glVertex3f(r3 * c2, y3, r3 * s2);
-        glNormal3f(c2, -0.3f, s2);
-        glTexCoord2f(u2, v4);
-        glVertex3f(r4 * c2, y4, r4 * s2);
-
         glEnd();
     }
+
+    for (int i = 0; i < segs; i++) {
+        float a1 = i * 2.0f * 3.14159265f / segs;
+        float a2 = (i + 1) * 2.0f * 3.14159265f / segs;
+        float c1 = cos(a1), s1 = sin(a1);
+        float c2 = cos(a2), s2 = sin(a2);
+
+        float r1 = midRadius, r2 = topRadius;
+        float y1 = baseHeight, y2 = baseHeight + midHeight;
+        float u1 = (float)i / segs, u2 = (float)(i + 1) / segs;
+        float v1 = 0.7f, v2 = 1.0f;
+
+        glBegin(GL_TRIANGLE_STRIP);
+        glNormal3f(avgNx * c1, avgNy, avgNx * s1);
+        glTexCoord2f(u1, v1);
+        glVertex3f(r1 * c1, y1, r1 * s1);
+        glNormal3f(avgNx * c1, avgNy, avgNx * s1);
+        glTexCoord2f(u1, v2);
+        glVertex3f(r2 * c1, y2, r2 * s1);
+        glNormal3f(avgNx * c2, avgNy, avgNx * s2);
+        glTexCoord2f(u2, v1);
+        glVertex3f(r1 * c2, y1, r1 * s2);
+        glNormal3f(avgNx * c2, avgNy, avgNx * s2);
+        glTexCoord2f(u2, v2);
+        glVertex3f(r2 * c2, y2, r2 * s2);
+        glEnd();
+    }
+
+    for (int i = 0; i < segs; i++) {
+        float a1 = i * 2.0f * 3.14159265f / segs;
+        float a2 = (i + 1) * 2.0f * 3.14159265f / segs;
+        float c1 = cos(a1), s1 = sin(a1);
+        float c2 = cos(a2), s2 = sin(a2);
+
+        float innerR = topRadius * 0.35f;
+        float outerR = topRadius;
+        float y = baseHeight + midHeight;
+
+        float u1i = 0.5f + 0.5f * (innerR / outerR) * cos(a1);
+        float v1i = 0.5f + 0.5f * (innerR / outerR) * sin(a1);
+        float u2i = 0.5f + 0.5f * (innerR / outerR) * cos(a2);
+        float v2i = 0.5f + 0.5f * (innerR / outerR) * sin(a2);
+        float u1o = 0.5f + 0.5f * cos(a1);
+        float v1o = 0.5f + 0.5f * sin(a1);
+        float u2o = 0.5f + 0.5f * cos(a2);
+        float v2o = 0.5f + 0.5f * sin(a2);
+
+        glBegin(GL_TRIANGLE_STRIP);
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(u1o, v1o);
+        glVertex3f(outerR * c1, y, outerR * s1);
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(u1i, v1i);
+        glVertex3f(innerR * c1, y, innerR * s1);
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(u2o, v2o);
+        glVertex3f(outerR * c2, y, outerR * s2);
+        glNormal3f(0.0f, 1.0f, 0.0f);
+        glTexCoord2f(u2i, v2i);
+        glVertex3f(innerR * c2, y, innerR * s2);
+        glEnd();
+    }
+
+    glShadeModel(GL_SMOOTH);
 }

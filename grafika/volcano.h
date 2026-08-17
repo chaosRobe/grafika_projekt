@@ -34,10 +34,6 @@ struct AppState {
     float cameraAngle;
     float cameraHeight;
     bool isAnimating;
-    float smokeY;
-    float smokeScale;
-    float smokeOffsetX;
-    float smokeOffsetZ;
     bool mouseDragging;
     int lastMouseX;
     int lastMouseY;
@@ -72,3 +68,4 @@ void initSkybox(AppState& app);
 void initSun(AppState& app);
 void mouseMotion(AppState& app, int x, int y);
 void mouseWheel(AppState& app, int button, int x, int y);
+void initSmokeParticles();
