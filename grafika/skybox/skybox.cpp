@@ -76,10 +76,19 @@ void initSun(AppState& app) {
 }
 
 void drawSkybox() {
+    glPushMatrix();
+
+    float angleRad = g_app.cameraAngle * 3.14159265f / 180.0f;
+    float camX = g_app.cameraDist * sin(angleRad);
+    float camY = g_app.cameraHeight;
+    float camZ = g_app.cameraDist * cos(angleRad);
+    glTranslatef(camX, camY, camZ);
+
+    glDisable(GL_LIGHTING);
+    glDepthMask(GL_FALSE);
+
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, g_app.skyboxTextureID);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
 
     float size = 80.0f;
     float topY = size * 0.6f;
@@ -107,8 +116,9 @@ void drawSkybox() {
     glTexCoord2f(0.0f, 1.0f); glVertex3f(size, topY, -size);
     glEnd();
 
-    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
     glEnable(GL_LIGHTING);
+    glPopMatrix();
 }
 
 void drawSun() {
