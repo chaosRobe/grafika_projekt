@@ -40,13 +40,13 @@ void displayScene(AppState& app) {
         volcanoEmissive[2] = 0.0f;
         volcanoShininess = 10.0f;
     } else if (app.state == VolcanoState::ERUPTION) {
-        volcanoAmbient[0] = 0.5f; volcanoAmbient[1] = 0.25f; volcanoAmbient[2] = 0.05f;
-        volcanoDiffuse[0] = 0.55f; volcanoDiffuse[1] = 0.35f; volcanoDiffuse[2] = 0.1f;
-        float pulse = 0.2f + 0.15f * sin(app.stateTimer * 6.0f);
+        volcanoAmbient[0] = 0.6f; volcanoAmbient[1] = 0.3f; volcanoAmbient[2] = 0.1f;
+        volcanoDiffuse[0] = 0.65f; volcanoDiffuse[1] = 0.4f; volcanoDiffuse[2] = 0.15f;
+        float pulse = 0.4f + 0.3f * sin(app.stateTimer * 6.0f);
         volcanoEmissive[0] = pulse;
-        volcanoEmissive[1] = pulse * 0.5f;
-        volcanoEmissive[2] = 0.0f;
-        volcanoShininess = 15.0f;
+        volcanoEmissive[1] = pulse * 0.6f;
+        volcanoEmissive[2] = pulse * 0.1f;
+        volcanoShininess = 20.0f;
     }
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, volcanoAmbient);

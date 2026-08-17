@@ -42,24 +42,33 @@ void generateRockTexture(unsigned char* texData, int width, int height) {
     for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
             int idx = (y * width + x) * 4;
-            float nx = (float)x / (float)width * 8.0f;
-            float ny = (float)y / (float)height * 8.0f;
-            float n = fbm(nx, ny, 5);
+            float nx = (float)x / (float)width * 16.0f;
+            float ny = (float)y / (float)height * 16.0f;
 
-            float baseR = 80.0f + n * 60.0f;
-            float baseG = 70.0f + n * 50.0f;
-            float baseB = 60.0f + n * 40.0f;
+            float n1 = fbm(nx, ny, 7);
+            float n2 = fbm(nx * 4.0f + 10.0f, ny * 4.0f + 10.0f, 5);
+            float n3 = fbm(nx * 10.0f + 30.0f, ny * 10.0f + 30.0f, 4);
 
-            float crater = fbm(nx * 2.0f + 5.0f, ny * 2.0f + 5.0f, 3);
-            if (crater > 0.6f) {
-                baseR += 40.0f;
-                baseG += 10.0f;
-                baseB -= 10.0f;
+            float sharp = n1 * 0.5f + n2 * 0.35f + n3 * 0.15f;
+
+            float threshold = 0.45f;
+            float rock = (sharp < threshold) ? (sharp / threshold) * 0.3f : 0.3f + (sharp - threshold) / (1.0f - threshold) * 0.7f;
+
+            float baseGray = rock * 180.0f - 15.0f;
+
+            float vesicle = fbm(nx * 2.0f + 60.0f, ny * 2.0f + 60.0f, 3);
+            if (vesicle > 0.6f && sharp < 0.5f) {
+                baseGray -= 25.0f;
             }
 
-            texData[idx] = (unsigned char)fmin(255.0f, fmax(0.0f, baseR));
-            texData[idx + 1] = (unsigned char)fmin(255.0f, fmax(0.0f, baseG));
-            texData[idx + 2] = (unsigned char)fmin(255.0f, fmax(0.0f, baseB));
+            float crack = fbm(nx * 8.0f + 70.0f, ny * 8.0f + 70.0f, 2);
+            if (crack > 0.7f) {
+                baseGray -= 40.0f;
+            }
+
+            texData[idx] = (unsigned char)fmin(255.0f, fmax(0.0f, baseGray));
+            texData[idx + 1] = (unsigned char)fmin(255.0f, fmax(0.0f, baseGray));
+            texData[idx + 2] = (unsigned char)fmin(255.0f, fmax(0.0f, baseGray + 3.0f));
             texData[idx + 3] = 255;
         }
     }

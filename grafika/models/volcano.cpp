@@ -7,11 +7,11 @@ void drawVolcano() {
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glShadeModel(GL_FLAT);
 
-    float baseRadius = 4.5f;
-    float midRadius = 3.2f;
-    float topRadius = 1.0f;
-    float baseHeight = 3.5f;
-    float midHeight = 1.5f;
+    float baseRadius = 8.0f;
+    float midRadius = 5.5f;
+    float topRadius = 2.0f;
+    float baseHeight = 6.0f;
+    float midHeight = 3.0f;
     int segs = 32;
 
     float avgNx = 0.7f;

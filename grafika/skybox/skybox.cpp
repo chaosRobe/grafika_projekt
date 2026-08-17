@@ -148,12 +148,11 @@ void drawSkybox() {
 }
 
 void drawSun() {
-    float sunX = 30.0f * cosf(g_app.moonAngle * 3.14159265f / 180.0f);
-    float sunY = 25.0f + 10.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
-    float sunZ = 30.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunX = 50.0f * cosf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunY = 35.0f + 10.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunZ = 50.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
 
-    glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, g_app.sunTextureID);
+    glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE);
@@ -161,17 +160,20 @@ void drawSun() {
 
     glPushMatrix();
     glTranslatef(sunX, sunY, sunZ);
-    glRotatef(-g_app.cameraAngle, 0.0f, 1.0f, 0.0f);
-    glBegin(GL_QUADS);
-    glTexCoord2f(0.0f, 0.0f); glVertex3f(-4.0f, -4.0f, 0.0f);
-    glTexCoord2f(1.0f, 0.0f); glVertex3f(4.0f, -4.0f, 0.0f);
-    glTexCoord2f(1.0f, 1.0f); glVertex3f(4.0f, 4.0f, 0.0f);
-    glTexCoord2f(0.0f, 1.0f); glVertex3f(-4.0f, 4.0f, 0.0f);
-    glEnd();
+
+    glColor4f(1.0f, 0.95f, 0.6f, 0.9f);
+    glutSolidSphere(5.0f, 16, 12);
+
+    glColor4f(1.0f, 0.8f, 0.3f, 0.3f);
+    glutSolidSphere(7.0f, 12, 8);
+
+    glColor4f(1.0f, 0.7f, 0.2f, 0.1f);
+    glutSolidSphere(9.0f, 8, 6);
+
     glPopMatrix();
 
     glEnable(GL_DEPTH_TEST);
     glDisable(GL_BLEND);
     glEnable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 }

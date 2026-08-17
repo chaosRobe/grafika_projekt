@@ -9,9 +9,9 @@ void initAppState(AppState& app) {
     app.state = VolcanoState::DORMANT;
     app.stateTimer = 0.0f;
     app.numParticles = 0;
-    app.cameraDist = 12.0f;
+    app.cameraDist = 25.0f;
     app.cameraAngle = 45.0f;
-    app.cameraHeight = 8.0f;
+    app.cameraHeight = 12.0f;
     app.isAnimating = true;
     app.mouseDragging = false;
     app.lastMouseX = 0;
@@ -77,14 +77,16 @@ void initLights(AppState& app) {
     glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 0.8f);
     glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.3f);
 
-    float moonAmbient[] = { 0.4f, 0.38f, 0.35f, 1.0f };
-    float moonDiffuse[] = { 0.9f, 0.85f, 0.75f, 1.0f };
-    float moonSpecular[] = { 0.8f, 0.75f, 0.7f, 1.0f };
+    float sunAmbient[] = { 0.55f, 0.52f, 0.48f, 1.0f };
+    float sunDiffuse[] = { 1.0f, 0.95f, 0.88f, 1.0f };
+    float sunSpecular[] = { 0.9f, 0.85f, 0.8f, 1.0f };
 
-    glLightfv(GL_LIGHT1, GL_AMBIENT, moonAmbient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, moonDiffuse);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, moonSpecular);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, sunAmbient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, sunDiffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, sunSpecular);
     glLightfv(GL_LIGHT1, GL_POSITION, app.lights.moonPos);
+    glLighti(GL_LIGHT1, GL_SPOT_EXPONENT, 0);
+    glLighti(GL_LIGHT1, GL_SPOT_CUTOFF, 180);
 
     float matAmbient[] = { 0.6f, 0.55f, 0.5f, 1.0f };
     float matDiffuse[] = { 0.7f, 0.65f, 0.6f, 1.0f };
@@ -98,14 +100,15 @@ void initLights(AppState& app) {
 
 void updateLights(AppState& app) {
     float angleRad = app.lights.moonAngle * 3.14159265f / 180.0f;
-    app.lights.moonPos[0] = 8.0f * cosf(angleRad);
-    app.lights.moonPos[1] = 6.0f + 2.0f * sinf(angleRad);
-    app.lights.moonPos[2] = 8.0f * sinf(angleRad);
+    app.lights.moonPos[0] = 50.0f * cosf(angleRad);
+    app.lights.moonPos[1] = 35.0f + 10.0f * sinf(angleRad);
+    app.lights.moonPos[2] = 50.0f * sinf(angleRad);
 
     float intensity = app.lights.lavaIntensity;
-    float diffuse[] = { 1.0f * intensity, 0.3f * intensity, 0.0f * intensity, 1.0f };
+    if (app.state == VolcanoState::ERUPTION) intensity *= 2.0f;
+    float diffuse[] = { 1.0f * intensity, 0.4f * intensity, 0.1f * intensity, 1.0f };
     glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 
-    float lavaPos[] = { 0.0f, 2.5f + sinf(app.stateTimer * 2.0f) * 0.3f, 0.0f, 1.0f };
+    float lavaPos[] = { 0.0f, 3.0f + sinf(app.stateTimer * 2.0f) * 0.5f, 0.0f, 1.0f };
     glLightfv(GL_LIGHT0, GL_POSITION, lavaPos);
 }

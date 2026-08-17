@@ -42,13 +42,13 @@ void updateSmokeParticles(float dt) {
         for (int i = 0; i < (int)emissionRate && smokeParticleCount < 100; i++) {
             SmokeParticle& p = smokeParticles[smokeParticleCount++];
             p.x = (float)(rand() % 100) / 100.0f * 0.3f - 0.15f;
-            p.y = 5.2f;
+            p.y = 9.5f;
             p.z = (float)(rand() % 100) / 100.0f * 0.3f - 0.15f;
-            p.vx = (float)(rand() % 1000) / 1000.0f * 0.3f - 0.15f;
-            p.vy = 3.0f + (float)(rand() % 100) / 100.0f * 2.0f;
-            p.vz = (float)(rand() % 1000) / 1000.0f * 0.3f - 0.15f;
+            p.vx = (float)(rand() % 1000) / 1000.0f * 0.2f - 0.1f;
+            p.vy = 4.0f + (float)(rand() % 100) / 100.0f * 3.0f;
+            p.vz = (float)(rand() % 1000) / 1000.0f * 0.2f - 0.1f;
             p.size = 0.25f + (float)(rand() % 50) / 100.0f * 0.25f;
-            p.life = 4.0f + (float)(rand() % 100) / 100.0f * 2.0f;
+            p.life = 6.0f + (float)(rand() % 100) / 100.0f * 3.0f;
             p.maxLife = p.life;
         }
     }
@@ -67,18 +67,18 @@ void drawSmokeCloud() {
     for (int i = 0; i < smokeParticleCount; i++) {
         SmokeParticle& p = smokeParticles[i];
         float alpha = p.life / p.maxLife;
-        float heightRatio = fmin(1.0f, p.y / 15.0f);
-        float expand = 0.5f + (1.0f - alpha) * 0.3f;
+        float heightRatio = fmin(1.0f, p.y / 25.0f);
+        float expand = 0.35f + (1.0f - alpha) * 0.2f;
 
-        float xzScale = expand * (1.0f + heightRatio * 6.0f);
-        float yScale = expand * (1.0f + heightRatio * 0.2f);
+        float xzScale = expand * (1.0f + heightRatio * 10.0f);
+        float yScale = expand * (1.0f + heightRatio * 0.15f);
 
         float gray = 0.25f + alpha * 0.2f;
         glColor4f(gray, gray, gray, 0.3f);
         glPushMatrix();
         glTranslatef(p.x, p.y, p.z);
-        glScalef(xzScale * 2.0f, yScale * 2.0f, xzScale * 2.0f);
-        glutSolidSphere(0.3f, 8, 6);
+        glScalef(xzScale * 3.5f, yScale * 3.5f, xzScale * 3.5f);
+        glutSolidSphere(0.5f, 8, 6);
         glPopMatrix();
     }
 

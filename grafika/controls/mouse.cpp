@@ -9,15 +9,15 @@ void mouse(AppState& app, int button, int state, int x, int y) {
         app.mouseDragging = false;
     } else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
         app.cameraDist -= 1.0f;
-        if (app.cameraDist < 5.0f) app.cameraDist = 5.0f;
+        if (app.cameraDist < 15.0f) app.cameraDist = 15.0f;
         glutPostRedisplay();
     } else if (button == 3 && state == GLUT_DOWN) {
         app.cameraDist -= 1.0f;
-        if (app.cameraDist < 5.0f) app.cameraDist = 5.0f;
+        if (app.cameraDist < 15.0f) app.cameraDist = 15.0f;
         glutPostRedisplay();
     } else if (button == 4 && state == GLUT_DOWN) {
         app.cameraDist += 1.0f;
-        if (app.cameraDist > 25.0f) app.cameraDist = 25.0f;
+        if (app.cameraDist > 45.0f) app.cameraDist = 45.0f;
         glutPostRedisplay();
     }
 }
