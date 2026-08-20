@@ -51,6 +51,7 @@ void drawVolcano();
 void drawLavaLake();
 void drawTerrain();
 void drawSmokeCloud();
+void drawLavaPools();
 void drawParticles(AppState& app);
 void updateParticles(AppState& app, float deltaTime);
 void emitParticles(AppState& app);

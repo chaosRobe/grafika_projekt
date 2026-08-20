@@ -93,50 +93,66 @@ void drawSkybox() {
     float topY = size * 0.6f;
     float botY = -size * 0.3f;
 
+    float bottomR, bottomG, bottomB, topR, topG, topB, ceilingR, ceilingG, ceilingB;
+
+    if (g_app.state == VolcanoState::DORMANT) {
+        bottomR = 0.45f; bottomG = 0.6f; bottomB = 0.85f;
+        topR = 0.3f; topG = 0.5f; topB = 0.8f;
+        ceilingR = 0.25f; ceilingG = 0.45f; ceilingB = 0.75f;
+    } else if (g_app.state == VolcanoState::ACTIVE) {
+        bottomR = 0.25f; bottomG = 0.25f; bottomB = 0.25f;
+        topR = 0.15f; topG = 0.15f; topB = 0.15f;
+        ceilingR = 0.1f; ceilingG = 0.1f; ceilingB = 0.1f;
+    } else if (g_app.state == VolcanoState::ERUPTION) {
+        bottomR = 0.35f; bottomG = 0.12f; bottomB = 0.08f;
+        topR = 0.15f; topG = 0.05f; topB = 0.04f;
+        ceilingR = 0.08f; ceilingG = 0.03f; ceilingB = 0.02f;
+    }
+
     glBegin(GL_QUADS);
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(-size, botY, -size);
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(size, botY, -size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(size, topY, -size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(-size, topY, -size);
 
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(size, botY, size);
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(-size, botY, size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(-size, topY, size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(size, topY, size);
 
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(-size, botY, size);
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(-size, botY, -size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(-size, topY, -size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(-size, topY, size);
 
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(size, botY, -size);
-    glColor3f(0.04f, 0.06f, 0.15f);
+    glColor3f(bottomR, bottomG, bottomB);
     glVertex3f(size, botY, size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(size, topY, size);
-    glColor3f(0.16f, 0.26f, 0.56f);
+    glColor3f(topR, topG, topB);
     glVertex3f(size, topY, -size);
 
-    glColor3f(0.20f, 0.30f, 0.65f);
+    glColor3f(ceilingR, ceilingG, ceilingB);
     glVertex3f(-size, topY, -size);
-    glColor3f(0.20f, 0.30f, 0.65f);
+    glColor3f(ceilingR, ceilingG, ceilingB);
     glVertex3f(size, topY, -size);
-    glColor3f(0.20f, 0.30f, 0.65f);
+    glColor3f(ceilingR, ceilingG, ceilingB);
     glVertex3f(size, topY, size);
-    glColor3f(0.20f, 0.30f, 0.65f);
+    glColor3f(ceilingR, ceilingG, ceilingB);
     glVertex3f(-size, topY, size);
     glEnd();
 

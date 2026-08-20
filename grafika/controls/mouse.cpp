@@ -29,7 +29,7 @@ void mouseMotion(AppState& app, int x, int y) {
         app.cameraAngle += dx * 0.5f;
         app.cameraHeight -= dy * 0.1f;
         if (app.cameraHeight < 2.0f) app.cameraHeight = 2.0f;
-        if (app.cameraHeight > 20.0f) app.cameraHeight = 20.0f;
+        if (app.cameraHeight > 60.0f) app.cameraHeight = 60.0f;
         app.lastMouseX = x;
         app.lastMouseY = y;
     }

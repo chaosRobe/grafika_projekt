@@ -135,6 +135,7 @@
     <ClCompile Include="models\lake.cpp" />
     <ClCompile Include="models\terrain.cpp" />
     <ClCompile Include="models\smoke.cpp" />
+    <ClCompile Include="models\lava_pools.cpp" />
     <ClCompile Include="particles\particles.cpp" />
     <ClCompile Include="display\display.cpp" />
     <ClCompile Include="display\menu.cpp" />

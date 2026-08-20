@@ -6,8 +6,8 @@ void drawTerrain() {
     bindRockTexture();
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    int gridSize = 120;
-    float size = 200.0f;
+    int gridSize = 300;
+    float size = 500.0f;
     float step = size / (float)gridSize;
 
     for (int i = 0; i < gridSize; i++) {
@@ -22,10 +22,10 @@ void drawTerrain() {
             float h3 = sin(x1 * 0.1f) * cos(z2 * 0.1f) * 0.5f;
             float h4 = sin(x2 * 0.1f) * cos(z2 * 0.1f) * 0.5f;
 
-            float u1 = (float)i / (float)gridSize * 20.0f;
-            float u2 = (float)(i + 1) / (float)gridSize * 20.0f;
-            float v1 = (float)j / (float)gridSize * 20.0f;
-            float v2 = (float)(j + 1) / (float)gridSize * 20.0f;
+            float u1 = (float)i / (float)gridSize * 50.0f;
+            float u2 = (float)(i + 1) / (float)gridSize * 50.0f;
+            float v1 = (float)j / (float)gridSize * 50.0f;
+            float v2 = (float)(j + 1) / (float)gridSize * 50.0f;
 
             float nx1 = sin(x1 * 0.3f) * 0.2f;
             float nz1 = cos(z1 * 0.3f) * 0.2f;

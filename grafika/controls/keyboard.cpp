@@ -38,7 +38,7 @@ void keyboard(AppState& app, unsigned char key, int x, int y) {
             app.cameraHeight = fmax(1.0f, app.cameraHeight - 0.5f);
             break;
         case 'e':
-            app.cameraHeight = fmin(20.0f, app.cameraHeight + 0.5f);
+            app.cameraHeight = fmin(60.0f, app.cameraHeight + 0.5f);
             break;
         case 'r':
             app.cameraDist = 50.0f;

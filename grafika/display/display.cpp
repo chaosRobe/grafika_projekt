@@ -20,83 +20,20 @@ void displayScene(AppState& app) {
 
     updateLights(app);
 
-    if (app.state != VolcanoState::DORMANT) {
-        float smokeAlpha = 0.35f;
-        float smokeR = 0.35f, smokeG = 0.3f, smokeB = 0.28f;
-        float smokeEmissiveR = 0.0f, smokeEmissiveG = 0.0f;
-
-        if (app.state == VolcanoState::ACTIVE) {
-            smokeAlpha = 0.45f;
-            smokeR = 0.4f; smokeG = 0.32f; smokeB = 0.25f;
-            smokeEmissiveR = 0.05f + 0.03f * sin(app.stateTimer * 2.0f);
-            smokeEmissiveG = smokeEmissiveR * 0.3f;
-        } else if (app.state == VolcanoState::ERUPTION) {
-            smokeAlpha = 0.65f;
-            smokeR = 0.5f; smokeG = 0.3f; smokeB = 0.15f;
-            smokeEmissiveR = 0.12f + 0.08f * sin(app.stateTimer * 4.0f);
-            smokeEmissiveG = smokeEmissiveR * 0.4f;
-        }
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        float smokeAmbient[] = { smokeR, smokeG, smokeB, smokeAlpha };
-        float smokeEmissive[] = { smokeEmissiveR, smokeEmissiveG, 0.0f, 1.0f };
-        glMaterialfv(GL_FRONT, GL_AMBIENT, smokeAmbient);
-        glMaterialfv(GL_FRONT, GL_EMISSION, smokeEmissive);
-
-        glDisable(GL_DEPTH_TEST);
-        drawSmokeCloud();
-        glEnable(GL_DEPTH_TEST);
-        glDisable(GL_BLEND);
-    }
-
-    float volcanoAmbient[] = { 0.25f, 0.25f, 0.25f, 1.0f };
-    float volcanoDiffuse[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-    float volcanoSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    float volcanoEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    float volcanoShininess = 5.0f;
-
-    if (app.state == VolcanoState::DORMANT) {
-        volcanoAmbient[0] = 0.2f; volcanoAmbient[1] = 0.18f; volcanoAmbient[2] = 0.15f;
-        volcanoDiffuse[0] = 0.3f; volcanoDiffuse[1] = 0.25f; volcanoDiffuse[2] = 0.2f;
-        volcanoEmissive[0] = 0.0f; volcanoEmissive[1] = 0.0f; volcanoEmissive[2] = 0.0f;
-        volcanoShininess = 5.0f;
-    } else if (app.state == VolcanoState::ACTIVE) {
-        volcanoAmbient[0] = 0.35f; volcanoAmbient[1] = 0.2f; volcanoAmbient[2] = 0.1f;
-        volcanoDiffuse[0] = 0.45f; volcanoDiffuse[1] = 0.3f; volcanoDiffuse[2] = 0.15f;
-        float pulse = 0.08f + 0.05f * sin(app.stateTimer * 3.0f);
-        volcanoEmissive[0] = pulse;
-        volcanoEmissive[1] = pulse * 0.4f;
-        volcanoEmissive[2] = 0.0f;
-        volcanoShininess = 10.0f;
-    } else if (app.state == VolcanoState::ERUPTION) {
-        volcanoAmbient[0] = 0.6f; volcanoAmbient[1] = 0.3f; volcanoAmbient[2] = 0.1f;
-        volcanoDiffuse[0] = 0.65f; volcanoDiffuse[1] = 0.4f; volcanoDiffuse[2] = 0.15f;
-        float pulse = 0.4f + 0.3f * sin(app.stateTimer * 6.0f);
-        volcanoEmissive[0] = pulse;
-        volcanoEmissive[1] = pulse * 0.6f;
-        volcanoEmissive[2] = pulse * 0.1f;
-        volcanoShininess = 20.0f;
-    }
-
-    glMaterialfv(GL_FRONT, GL_AMBIENT, volcanoAmbient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, volcanoDiffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, volcanoSpecular);
-    glMaterialfv(GL_FRONT, GL_EMISSION, volcanoEmissive);
-    glMaterialf(GL_FRONT, GL_SHININESS, volcanoShininess);
-
     float terrainAmbient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
     float terrainDiffuse[] = { 0.35f, 0.35f, 0.35f, 1.0f };
     float terrainSpecular[] = { 0.05f, 0.05f, 0.05f, 1.0f };
     float terrainEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
-    if (app.state == VolcanoState::ERUPTION) {
+    if (app.state == VolcanoState::ACTIVE) {
+        terrainAmbient[0] = 0.2f; terrainAmbient[1] = 0.2f; terrainAmbient[2] = 0.2f;
+        terrainDiffuse[0] = 0.25f; terrainDiffuse[1] = 0.25f; terrainDiffuse[2] = 0.25f;
+    } else if (app.state == VolcanoState::ERUPTION) {
+        terrainAmbient[0] = 0.12f; terrainAmbient[1] = 0.12f; terrainAmbient[2] = 0.12f;
+        terrainDiffuse[0] = 0.15f; terrainDiffuse[1] = 0.15f; terrainDiffuse[2] = 0.15f;
         float glow = 0.05f + 0.03f * sin(app.stateTimer * 4.0f);
         terrainEmissive[0] = glow;
         terrainEmissive[1] = glow * 0.3f;
-        terrainAmbient[0] += 0.1f;
-        terrainAmbient[1] += 0.03f;
     }
 
     glMaterialfv(GL_FRONT, GL_AMBIENT, terrainAmbient);
@@ -106,7 +43,44 @@ void displayScene(AppState& app) {
     glMaterialf(GL_FRONT, GL_SHININESS, 8.0f);
     drawTerrain();
 
+    float volcanoAmbient[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+    float volcanoDiffuse[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    float volcanoSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
+    float volcanoEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float volcanoShininess = 5.0f;
+
+    if (app.state == VolcanoState::DORMANT) {
+        volcanoAmbient[0] = 0.3f; volcanoAmbient[1] = 0.3f; volcanoAmbient[2] = 0.3f;
+        volcanoDiffuse[0] = 0.35f; volcanoDiffuse[1] = 0.35f; volcanoDiffuse[2] = 0.35f;
+        volcanoEmissive[0] = 0.0f; volcanoEmissive[1] = 0.0f; volcanoEmissive[2] = 0.0f;
+        volcanoShininess = 5.0f;
+    } else if (app.state == VolcanoState::ACTIVE) {
+        volcanoAmbient[0] = 0.15f; volcanoAmbient[1] = 0.15f; volcanoAmbient[2] = 0.15f;
+        volcanoDiffuse[0] = 0.2f; volcanoDiffuse[1] = 0.2f; volcanoDiffuse[2] = 0.2f;
+        volcanoEmissive[0] = 0.0f;
+        volcanoEmissive[1] = 0.0f;
+        volcanoEmissive[2] = 0.0f;
+        volcanoShininess = 5.0f;
+    } else if (app.state == VolcanoState::ERUPTION) {
+        volcanoAmbient[0] = 0.08f; volcanoAmbient[1] = 0.08f; volcanoAmbient[2] = 0.08f;
+        volcanoDiffuse[0] = 0.15f; volcanoDiffuse[1] = 0.15f; volcanoDiffuse[2] = 0.15f;
+        volcanoEmissive[0] = 0.0f;
+        volcanoEmissive[1] = 0.0f;
+        volcanoEmissive[2] = 0.0f;
+        volcanoShininess = 5.0f;
+    }
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, volcanoAmbient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, volcanoDiffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, volcanoSpecular);
+    glMaterialfv(GL_FRONT, GL_EMISSION, volcanoEmissive);
+    glMaterialf(GL_FRONT, GL_SHININESS, volcanoShininess);
+
     drawVolcano();
+
+    if (app.state == VolcanoState::ERUPTION) {
+        drawLavaPools();
+    }
 
     float lakeAmbient[] = { 0.4f, 0.15f, 0.02f, 1.0f };
     float lakeDiffuse[] = { 0.6f, 0.2f, 0.05f, 1.0f };
@@ -140,6 +114,37 @@ void displayScene(AppState& app) {
     drawLavaLake();
 
     drawParticles(app);
+
+    if (app.state != VolcanoState::DORMANT) {
+        float smokeAlpha = 0.35f;
+        float smokeR = 0.35f, smokeG = 0.3f, smokeB = 0.28f;
+        float smokeEmissiveR = 0.0f, smokeEmissiveG = 0.0f;
+
+        if (app.state == VolcanoState::ACTIVE) {
+            smokeAlpha = 0.45f;
+            smokeR = 0.4f; smokeG = 0.32f; smokeB = 0.25f;
+            smokeEmissiveR = 0.05f + 0.03f * sin(app.stateTimer * 2.0f);
+            smokeEmissiveG = smokeEmissiveR * 0.3f;
+        } else if (app.state == VolcanoState::ERUPTION) {
+            smokeAlpha = 0.65f;
+            smokeR = 0.5f; smokeG = 0.3f; smokeB = 0.15f;
+            smokeEmissiveR = 0.12f + 0.08f * sin(app.stateTimer * 4.0f);
+            smokeEmissiveG = smokeEmissiveR * 0.4f;
+        }
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        float smokeAmbient[] = { smokeR, smokeG, smokeB, smokeAlpha };
+        float smokeEmissive[] = { smokeEmissiveR, smokeEmissiveG, 0.0f, 1.0f };
+        glMaterialfv(GL_FRONT, GL_AMBIENT, smokeAmbient);
+        glMaterialfv(GL_FRONT, GL_EMISSION, smokeEmissive);
+
+        glDisable(GL_DEPTH_TEST);
+        drawSmokeCloud();
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_BLEND);
+    }
 
     glutSwapBuffers();
 }
