@@ -47,7 +47,7 @@ void updateSmokeParticles(float dt) {
             p.vx = (float)(rand() % 1000) / 1000.0f * 0.2f - 0.1f;
             p.vy = 4.0f + (float)(rand() % 100) / 100.0f * 3.0f;
             p.vz = (float)(rand() % 1000) / 1000.0f * 0.2f - 0.1f;
-            p.size = 0.25f + (float)(rand() % 50) / 100.0f * 0.25f;
+            p.size = 0.05f + (float)(rand() % 50) / 100.0f * 0.25f;
             p.life = 6.0f + (float)(rand() % 100) / 100.0f * 3.0f;
             p.maxLife = p.life;
         }
@@ -70,7 +70,7 @@ void drawSmokeCloud() {
         float heightRatio = fmin(1.0f, p.y / 25.0f);
         float expand = 0.35f + (1.0f - alpha) * 0.2f;
 
-        float xzScale = expand * (1.0f + heightRatio * 10.0f);
+        float xzScale = expand * (1.0f + heightRatio * 30.0f);
         float yScale = expand * (1.0f + heightRatio * 0.15f);
 
         float gray = 0.25f + alpha * 0.2f;

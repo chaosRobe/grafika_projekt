@@ -148,9 +148,9 @@ void drawSkybox() {
 }
 
 void drawSun() {
-    float sunX = 50.0f * cosf(g_app.moonAngle * 3.14159265f / 180.0f);
-    float sunY = 35.0f + 10.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
-    float sunZ = 50.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunX = 120.0f * cosf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunY = 80.0f + 15.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
+    float sunZ = 120.0f * sinf(g_app.moonAngle * 3.14159265f / 180.0f);
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_LIGHTING);

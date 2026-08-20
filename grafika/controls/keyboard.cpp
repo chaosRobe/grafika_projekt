@@ -32,7 +32,7 @@ void keyboard(AppState& app, unsigned char key, int x, int y) {
             app.cameraDist = fmax(15.0f, app.cameraDist - 0.5f);
             break;
         case 's':
-            app.cameraDist = fmin(45.0f, app.cameraDist + 0.5f);
+            app.cameraDist = fmin(120.0f, app.cameraDist + 0.5f);
             break;
         case 'q':
             app.cameraHeight = fmax(1.0f, app.cameraHeight - 0.5f);
@@ -41,9 +41,9 @@ void keyboard(AppState& app, unsigned char key, int x, int y) {
             app.cameraHeight = fmin(20.0f, app.cameraHeight + 0.5f);
             break;
         case 'r':
-            app.cameraDist = 25.0f;
+            app.cameraDist = 50.0f;
             app.cameraAngle = 45.0f;
-            app.cameraHeight = 12.0f;
+            app.cameraHeight = 25.0f;
             app.state = VolcanoState::DORMANT;
             resetParticles(app);
             app.lights.lavaIntensity = 0.3f;
@@ -64,7 +64,7 @@ void specialKeys(AppState& app, int key, int x, int y) {
             app.cameraDist = fmax(15.0f, app.cameraDist - 0.5f);
             break;
         case GLUT_KEY_DOWN:
-            app.cameraDist = fmin(45.0f, app.cameraDist + 0.5f);
+            app.cameraDist = fmin(120.0f, app.cameraDist + 0.5f);
             break;
     }
     glutPostRedisplay();

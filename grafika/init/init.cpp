@@ -9,9 +9,9 @@ void initAppState(AppState& app) {
     app.state = VolcanoState::DORMANT;
     app.stateTimer = 0.0f;
     app.numParticles = 0;
-    app.cameraDist = 25.0f;
+    app.cameraDist = 50.0f;
     app.cameraAngle = 45.0f;
-    app.cameraHeight = 12.0f;
+    app.cameraHeight = 25.0f;
     app.isAnimating = true;
     app.mouseDragging = false;
     app.lastMouseX = 0;

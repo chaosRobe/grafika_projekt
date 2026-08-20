@@ -17,7 +17,7 @@ void mouse(AppState& app, int button, int state, int x, int y) {
         glutPostRedisplay();
     } else if (button == 4 && state == GLUT_DOWN) {
         app.cameraDist += 1.0f;
-        if (app.cameraDist > 45.0f) app.cameraDist = 45.0f;
+        if (app.cameraDist > 120.0f) app.cameraDist = 120.0f;
         glutPostRedisplay();
     }
 }

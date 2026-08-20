@@ -79,15 +79,15 @@ void emitParticles(AppState& app) {
             if (!app.particles[j].active) {
                 app.particles[j].active = true;
                 app.particles[j].x = 0.0f;
-                app.particles[j].y = 3.5f;
+                app.particles[j].y = 18.0f;
                 app.particles[j].z = 0.0f;
 
-                float spread = 1.0f;
-                if (app.state == VolcanoState::ERUPTION) spread = 3.0f;
+                float spread = 2.5f;
+                if (app.state == VolcanoState::ERUPTION) spread = 7.0f;
 
                 app.particles[j].vx = ((float)rand() / RAND_MAX - 0.5f) * spread;
-                app.particles[j].vy = 4.0f + (float)rand() / RAND_MAX * 5.0f;
-                if (app.state == VolcanoState::ERUPTION) app.particles[j].vy += 2.0f;
+                app.particles[j].vy = 6.0f + (float)rand() / RAND_MAX * 7.0f;
+                if (app.state == VolcanoState::ERUPTION) app.particles[j].vy += 4.0f;
                 app.particles[j].vz = ((float)rand() / RAND_MAX - 0.5f) * spread;
 
                 app.particles[j].maxLife = 1.5f + (float)rand() / RAND_MAX * 2.0f;
