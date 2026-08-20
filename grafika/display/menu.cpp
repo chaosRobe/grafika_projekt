@@ -17,24 +17,28 @@ void menuCallback(AppState& app, int value) {
         case 1:
             app.state = VolcanoState::DORMANT;
             resetParticles(app);
+            initSmokeParticles();
             app.lights.lavaIntensity = 0.2f;
             break;
         case 2:
             app.state = VolcanoState::ACTIVE;
             resetParticles(app);
+            initSmokeParticles();
             app.lights.lavaIntensity = 0.5f;
             break;
         case 3:
             app.state = VolcanoState::ERUPTION;
             resetParticles(app);
+            initSmokeParticles();
             app.lights.lavaIntensity = 1.0f;
             break;
         case 99:
-            app.cameraDist = 12.0f;
+            app.cameraDist = 50.0f;
             app.cameraAngle = 45.0f;
-            app.cameraHeight = 8.0f;
+            app.cameraHeight = 25.0f;
             app.state = VolcanoState::DORMANT;
             resetParticles(app);
+            initSmokeParticles();
             app.lights.lavaIntensity = 0.3f;
             break;
     }
