@@ -20,8 +20,8 @@ void displayScene(AppState& app) {
 
     updateLights(app);
 
-    float volcanoAmbient[] = { 0.2f, 0.18f, 0.15f, 1.0f };
-    float volcanoDiffuse[] = { 0.3f, 0.25f, 0.2f, 1.0f };
+    float volcanoAmbient[] = { 0.25f, 0.25f, 0.25f, 1.0f };
+    float volcanoDiffuse[] = { 0.3f, 0.3f, 0.3f, 1.0f };
     float volcanoSpecular[] = { 0.1f, 0.1f, 0.1f, 1.0f };
     float volcanoEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     float volcanoShininess = 5.0f;
@@ -55,8 +55,8 @@ void displayScene(AppState& app) {
     glMaterialfv(GL_FRONT, GL_EMISSION, volcanoEmissive);
     glMaterialf(GL_FRONT, GL_SHININESS, volcanoShininess);
 
-    float terrainAmbient[] = { 0.25f, 0.22f, 0.18f, 1.0f };
-    float terrainDiffuse[] = { 0.35f, 0.3f, 0.25f, 1.0f };
+    float terrainAmbient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    float terrainDiffuse[] = { 0.35f, 0.35f, 0.35f, 1.0f };
     float terrainSpecular[] = { 0.05f, 0.05f, 0.05f, 1.0f };
     float terrainEmissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 

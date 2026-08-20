@@ -41,9 +41,9 @@ void updateSmokeParticles(float dt) {
         float emissionRate = (g_app.state == VolcanoState::ERUPTION) ? 5.0f : 2.5f;
         for (int i = 0; i < (int)emissionRate && smokeParticleCount < 100; i++) {
             SmokeParticle& p = smokeParticles[smokeParticleCount++];
-            p.x = (float)(rand() % 100) / 100.0f * 0.3f - 0.15f;
-            p.y = 9.5f;
-            p.z = (float)(rand() % 100) / 100.0f * 0.3f - 0.15f;
+            p.x = (float)(rand() % 100) / 100.0f * 0.6f - 0.3f;
+            p.y = 18.0f;
+            p.z = (float)(rand() % 100) / 100.0f * 0.6f - 0.3f;
             p.vx = (float)(rand() % 1000) / 1000.0f * 0.2f - 0.1f;
             p.vy = 4.0f + (float)(rand() % 100) / 100.0f * 3.0f;
             p.vz = (float)(rand() % 1000) / 1000.0f * 0.2f - 0.1f;

@@ -6,8 +6,8 @@ void drawTerrain() {
     bindRockTexture();
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-    int gridSize = 100;
-    float size = 120.0f;
+    int gridSize = 120;
+    float size = 200.0f;
     float step = size / (float)gridSize;
 
     for (int i = 0; i < gridSize; i++) {
